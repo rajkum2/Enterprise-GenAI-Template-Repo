@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  title: Orchestrator Service API
+  version: 1.0.0
+paths:
+  /v1/chat:
+    post:
+      summary: Submit a chat request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id: { type: string }
+                message: { type: string }
+              required: [session_id, message]
+      responses:
+        '200':
+          description: Chat response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+  /v1/tasks:
+    post:
+      summary: Create a long-running task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task_type: { type: string }
+                payload: { type: object }
+              required: [task_type, payload]
+      responses:
+        '202':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /v1/tasks/{id}:
+    get:
+      summary: Get task status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Task status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+  /v1/tasks/{id}/approve:
+    post:
+      summary: Approve a pending task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Task approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+components:
+  schemas:
+    ChatResponse:
+      type: object
+      properties:
+        id: { type: string }
+        trace_id: { type: string }
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessage'
+        tool_decisions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolDecision'
+      required: [id, trace_id, messages]
+    ChatMessage:
+      type: object
+      properties:
+        role: { type: string }
+        content: { type: string }
+      required: [role, content]
+    ToolDecision:
+      type: object
+      properties:
+        tool_name: { type: string }
+        approved: { type: boolean }
+        reason: { type: string }
+      required: [tool_name, approved]
+    Task:
+      type: object
+      properties:
+        id: { type: string }
+        status: { type: string }
+        result: { type: object }
+      required: [id, status]

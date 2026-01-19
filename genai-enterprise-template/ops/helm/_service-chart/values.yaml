@@ -1,0 +1,16 @@
+serviceName: CHANGE_ME
+image:
+  repository: CHANGE_ME
+  tag: "latest"
+  pullPolicy: IfNotPresent
+replicaCount: 2
+service:
+  port: 8080
+otelServiceName: CHANGE_ME
+irsaRoleArn: CHANGE_ME
+resources: {}
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70

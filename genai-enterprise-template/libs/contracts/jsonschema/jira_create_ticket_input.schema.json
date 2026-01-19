@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JiraCreateTicketInput",
+  "type": "object",
+  "required": ["project_key", "summary", "description"],
+  "properties": {
+    "project_key": { "type": "string" },
+    "summary": { "type": "string" },
+    "description": { "type": "string" },
+    "priority": { "type": "string" },
+    "labels": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

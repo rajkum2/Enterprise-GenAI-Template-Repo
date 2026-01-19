@@ -1,0 +1,12 @@
+name: Deploy Stage
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: stage
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to stage
+        run: echo "CHANGE_ME: helm upgrade --install"

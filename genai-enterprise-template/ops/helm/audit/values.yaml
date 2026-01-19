@@ -1,0 +1,16 @@
+serviceName: audit-service
+image:
+  repository: CHANGE_ME/audit-service
+  tag: "latest"
+  pullPolicy: IfNotPresent
+replicaCount: 2
+service:
+  port: 8080
+otelServiceName: audit-service
+irsaRoleArn: CHANGE_ME
+resources: {}
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70

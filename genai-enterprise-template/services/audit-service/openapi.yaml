@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: Audit Service API
+  version: 1.0.0
+paths:
+  /v1/audit/events:
+    post:
+      summary: Submit audit events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+              required: [events]
+      responses:
+        '202':
+          description: Events accepted

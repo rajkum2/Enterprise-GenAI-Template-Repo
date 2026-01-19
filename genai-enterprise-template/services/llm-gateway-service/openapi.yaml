@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: LLM Gateway Service API
+  version: 1.0.0
+paths:
+  /v1/generate:
+    post:
+      summary: Generate model output
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt: { type: string }
+                model: { type: string }
+              required: [prompt]
+      responses:
+        '200':
+          description: Generation response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output: { type: string }
+                  trace_id: { type: string }

@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Policy Service API
+  version: 1.0.0
+paths:
+  /v1/authorize/retrieve:
+    post:
+      summary: Authorize retrieval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject: { type: object }
+                resource: { type: object }
+                action: { type: string }
+              required: [subject, resource, action]
+      responses:
+        '200':
+          description: Authorization decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Decision'
+  /v1/authorize/tool:
+    post:
+      summary: Authorize tool execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject: { type: object }
+                tool: { type: object }
+                action: { type: string }
+              required: [subject, tool, action]
+      responses:
+        '200':
+          description: Authorization decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Decision'
+components:
+  schemas:
+    Decision:
+      type: object
+      properties:
+        allowed: { type: boolean }
+        reason: { type: string }
+      required: [allowed]

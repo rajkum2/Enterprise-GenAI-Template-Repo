@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: RAG Retrieval Service API
+  version: 1.0.0
+paths:
+  /v1/retrieve:
+    post:
+      summary: Retrieve context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query: { type: string }
+                top_k: { type: integer }
+              required: [query]
+      responses:
+        '200':
+          description: Retrieval results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        text: { type: string }
+                        source: { type: string }

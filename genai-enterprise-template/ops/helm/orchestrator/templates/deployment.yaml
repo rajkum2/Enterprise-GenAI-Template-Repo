@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "service-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "service-chart.name" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "service-chart.name" . }}
+    spec:
+      serviceAccountName: {{ include "service-chart.fullname" . }}
+      containers:
+        - name: {{ include "service-chart.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.otelExporterEndpoint | default "http://otel-collector:4317" | quote }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.otelServiceName | quote }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}

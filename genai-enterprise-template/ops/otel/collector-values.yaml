@@ -1,0 +1,32 @@
+mode: deployment
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+  redact:
+    # Placeholder for PII/PHI redaction
+    actions:
+      - key: http.request.header.authorization
+        action: delete
+
+exporters:
+  awsxray: {}
+  awsemf: {}
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [redact, batch]
+      exporters: [awsxray, logging]
+    metrics:
+      receivers: [otlp]
+      processors: [redact, batch]
+      exporters: [awsemf, logging]

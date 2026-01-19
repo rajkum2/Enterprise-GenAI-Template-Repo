@@ -1,0 +1,17 @@
+prompts:
+  - "You are a helpful enterprise assistant. {{input}}"
+
+providers:
+  - id: openai:gpt-4o-mini
+    config:
+      apiKey: CHANGE_ME
+
+scenarios:
+  - file: ../scenarios/README.md
+
+tests:
+  - vars:
+      input: "Summarize the access policy for Jira ticket creation."
+    assert:
+      - type: contains
+        value: "policy"

@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: Jira Connector Service API
+  version: 1.0.0
+paths:
+  /v1/tickets/create:
+    post:
+      summary: Create Jira ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../libs/contracts/jsonschema/jira_create_ticket_input.schema.json'
+      responses:
+        '200':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket_id: { type: string }
+                  url: { type: string }

@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: Ingestion Service API
+  version: 1.0.0
+paths:
+  /v1/ingest:
+    post:
+      summary: Ingest documents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source: { type: string }
+                uri: { type: string }
+              required: [source, uri]
+      responses:
+        '202':
+          description: Ingestion started
+  /v1/index/status:
+    get:
+      summary: Get index status
+      responses:
+        '200':
+          description: Index status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  last_updated: { type: string }
