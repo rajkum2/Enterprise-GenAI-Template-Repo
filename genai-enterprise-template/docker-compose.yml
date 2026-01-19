@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-genai}
+      POSTGRES_USER: ${POSTGRES_USER:-genai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genai}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  policy:
+    build: ./services/policy-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: policy-service
+    ports:
+      - "8004:8000"
+    depends_on: [postgres]
+  audit:
+    build: ./services/audit-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: audit-service
+      AUDIT_LOCAL_PATH: ./data/audit
+    ports:
+      - "8006:8000"
+    depends_on: [postgres]
+  retrieval:
+    build: ./services/rag-retrieval-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: rag-retrieval-service
+    ports:
+      - "8002:8000"
+    depends_on: [postgres]
+  ingestion:
+    build: ./services/ingestion-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: ingestion-service
+    ports:
+      - "8003:8000"
+    depends_on: [postgres]
+  llm-gateway:
+    build: ./services/llm-gateway-service
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: llm-gateway-service
+      LLM_PROVIDER: ${LLM_PROVIDER:-mock}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+      LANGFUSE_HOST: ${LANGFUSE_HOST}
+    ports:
+      - "8001:8000"
+  orchestrator:
+    build: ./services/orchestrator-service
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: orchestrator-service
+      POLICY_SERVICE_URL: ${POLICY_SERVICE_URL}
+      RAG_RETRIEVAL_URL: ${RAG_RETRIEVAL_URL}
+      LLM_GATEWAY_URL: ${LLM_GATEWAY_URL}
+      AUDIT_SERVICE_URL: ${AUDIT_SERVICE_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+      LANGFUSE_HOST: ${LANGFUSE_HOST}
+    ports:
+      - "8000:8000"
+    depends_on: [postgres, policy, audit, retrieval, llm-gateway]
+  connector-jira:
+    build: ./services/connector-jira-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      OTEL_SERVICE_NAME: connector-jira-service
+      JIRA_BASE_URL: ${JIRA_BASE_URL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+    ports:
+      - "8005:8000"
+    depends_on: [postgres, redis]
+
+volumes:
+  pgdata: {}
