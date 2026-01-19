@@ -20,7 +20,7 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
       OTEL_SERVICE_NAME: policy-service
     ports:
-      - "8004:8000"
+      - "8004:8080"
     depends_on: [postgres]
   audit:
     build: ./services/audit-service
@@ -30,7 +30,7 @@ services:
       OTEL_SERVICE_NAME: audit-service
       AUDIT_LOCAL_PATH: ./data/audit
     ports:
-      - "8006:8000"
+      - "8006:8080"
     depends_on: [postgres]
   retrieval:
     build: ./services/rag-retrieval-service
